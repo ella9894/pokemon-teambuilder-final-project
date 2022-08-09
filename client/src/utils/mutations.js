@@ -25,7 +25,7 @@ export const ADD_USER = gql`
 `
 
 export const SAVE_TEAM = gql`
-    mutation saveBook($name: String!, $monoToggle: Boolean!, $monotype: String, $generation: Integer!, $game: String!, $pokemon: [Pokemon]) {
+    mutation saveBook($name: String!, $monoToggle: Boolean!, $monotype: String, $generation: Number!, $game: String!, $pokemon: [Pokemon]) {
         saveBook(name: $name, monoToggle: $monoToggle, monotype: $monotype, generation: $generation, game: $game, pokemon: $pokemon) {
             _id
             username
