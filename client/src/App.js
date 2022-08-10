@@ -14,7 +14,7 @@ import { setContext } from "@apollo/client/link/context";
 import { Typography } from "@mui/material";
 
 const httpLink = createHttpLink({
-  uri: "http://localhost:3001/graphql",
+  url: "http://localhost:3001",
 });
 
 const authLink = setContext((_, { headers }) => {
