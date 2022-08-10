@@ -7,8 +7,6 @@ import SignupForm from "./SignupForm";
 import LoginForm from "./LoginForm";
 import NewTeamForm from "./NewTeamForm";
 
-const pages = ["Teambuilder", "My Teams"];
-
 const signupStyle = {
   position: "absolute",
   top: "50%",
@@ -44,6 +42,8 @@ function Navbar() {
     setUserValue(`${newValue}`);
   };
 
+  console.log(Auth.loggedIn());
+
   return (
     <>
       <AppBar position="static">
@@ -60,18 +60,28 @@ function Navbar() {
             >
               Pokemon Team Builder
             </Typography>
-            <Box sx={{ flexGrow: 1, display: { xs: "flex" } }}>
-              {pages.map((page) => (
-                <Typography textAlign="center">{page}</Typography>
-              ))}
-            </Box>
             <Box sx={{ flexGrow: 1 }}>
               {Auth.loggedIn() ? (
                 <>
-                  <Button variant="contained" color="secondary">
+                  <Button
+                    variant="contained"
+                    color="secondary"
+                    onClick={() => setShowTeamModal(true)}
+                  >
                     New Team
                   </Button>
-                  <Button variant="contained" color="secondary">
+                  <Button
+                    variant="contained"
+                    color="secondary"
+                    onClick={() => window.location.assign("/")}
+                  >
+                    My Teams
+                  </Button>
+                  <Button
+                    variant="contained"
+                    color="secondary"
+                    onClick={Auth.logout}
+                  >
                     Logout
                   </Button>
                 </>
@@ -84,13 +94,6 @@ function Navbar() {
                   Login/Sign Up
                 </Button>
               )}
-              <Button
-                variant="contained"
-                color="secondary"
-                onClick={() => setShowTeamModal(true)}
-              >
-                New Team
-              </Button>
             </Box>
           </Toolbar>
         </Container>

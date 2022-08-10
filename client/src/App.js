@@ -14,7 +14,7 @@ import { setContext } from "@apollo/client/link/context";
 import { Typography } from "@mui/material";
 
 const httpLink = createHttpLink({
-  url: "http://localhost:3001",
+  uri: "http://localhost:3001/graphql",
 });
 
 const authLink = setContext((_, { headers }) => {
@@ -39,8 +39,8 @@ function App() {
         <>
           <Navbar />
           <Routes>
-            <Route exact path="/" component={Teams} />
-            <Route exact path="/teambuilder" component={TeamBuilder} />
+            <Route exact path="/" element={<Teams />} />
+            <Route exact path="/teambuilder" element={<TeamBuilder />} />
             <Route
               render={() => <Typography variant="h2">Invalid Page!</Typography>}
             />

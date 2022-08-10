@@ -11,11 +11,14 @@ import {
   FormControl,
   InputLabel,
   Divider,
+  Alert,
 } from "@mui/material";
 import { Box } from "@mui/system";
 
-import { useMutation } from '@apollo/client';
-import { SAVE_TEAM } from '../utils/mutations';
+import { useMutation } from "@apollo/client";
+import { SAVE_TEAM } from "../utils/mutations";
+
+import Auth from "../utils/auth";
 
 const types = [
   "Normal",
@@ -60,38 +63,67 @@ const games = [
     "Shield EX",
     "Brilliant Diamond",
     "Shining Pearl",
-    "Legends: Arceus",
   ],
 ];
 
 const generations = [1, 2, 3, 4, 5, 6, 7, 8];
 
 const NewTeamForm = () => {
-  const [teamFormData, setTeamFormData] = useState({ name: '', monoToggle: false, monotype: '', generation: 1, game: 'Red' });
+  const [teamFormData, setTeamFormData] = useState({
+    name: "",
+    monoToggle: false,
+    monotype: "None",
+    generation: 1,
+    game: "Red",
+  });
   const [saveTeam, { error }] = useMutation(SAVE_TEAM);
 
+  const changeName = (event) => {
+    setTeamFormData({ ...teamFormData, name: event.target.value });
+  };
+
   const monotypeToggle = (event) => {
-    setTeamFormData({ ...teamFormData, monoToggle: event.target.checked});
+    setTeamFormData({ ...teamFormData, monoToggle: event.target.checked });
     if (!event.target.checked) {
-      setTeamFormData({ ...teamFormData, monotype: ''});
+      setTeamFormData({ ...teamFormData, monotype: "" });
     }
   };
 
   const changeType = (event) => {
-    setTeamFormData({ ...teamFormData, monotype: event.target.value});
+    setTeamFormData({ ...teamFormData, monotype: event.target.value });
   };
 
   const changeGen = (event) => {
-    setTeamFormData({ ...teamFormData, generation: event.target.value, game: games[event.target.value - 1][0]});
+    setTeamFormData({
+      ...teamFormData,
+      generation: event.target.value,
+      game: games[event.target.value - 1][0],
+    });
   };
 
   const changeGame = (event) => {
-    setTeamFormData({ ...teamFormData, game: event.target.value});
+    setTeamFormData({ ...teamFormData, game: event.target.value });
   };
 
   const createTeam = async (event) => {
+    event.preventDefault();
+    const token = Auth.loggedIn() ? Auth.getToken() : null;
 
-  }
+    if (!token) {
+      return false;
+    }
+
+    try {
+      const { data } = await saveTeam({
+        variables: { ...teamFormData },
+      });
+      console.log(data);
+      console.log(data.saveTeam.name);
+      window.location.assign(`/teambuilder?id=${data.saveTeam._id}`);
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
   return (
     <>
@@ -105,7 +137,12 @@ const NewTeamForm = () => {
         onSubmit={createTeam}
       >
         <Stack>
-          <TextField fullWidth required label="Team Name" />
+          <TextField
+            fullWidth
+            required
+            onChange={changeName}
+            label="Team Name"
+          />
           <br />
           <Box fullWidth>
             <FormControl>
@@ -125,11 +162,11 @@ const NewTeamForm = () => {
                 ))}
               </Select>
             </FormControl>
-            <FormControl sx={{marginLeft: '15px'}}>
+            <FormControl sx={{ marginLeft: "15px" }}>
               <InputLabel id="game-picker">Game</InputLabel>
               <Select
                 labelId="game-picker"
-                id="gane-picker"
+                id="game-picker"
                 value={teamFormData.game}
                 label="Game"
                 onChange={changeGame}
@@ -143,7 +180,7 @@ const NewTeamForm = () => {
               </Select>
             </FormControl>
           </Box>
-          <br />
+          {/* <br />
           <Divider variant="middle" />
           <br />
           <FormControlLabel
@@ -151,26 +188,33 @@ const NewTeamForm = () => {
             label="Monotype"
           />
           <br />
-          {teamFormData.monoToggle && <FormControl>
-            <InputLabel id="monotype-picker">Monotype Type</InputLabel>
-            <Select
-              labelId="monotype-picker"
-              id="monotype-picker"
-              value={teamFormData.monotype}
-              label="Monotype Type"
-              onChange={changeType}
-            >
-              {types.map((type) => (
-                <MenuItem value={type} key={type}>
-                  {type}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>}
+          {teamFormData.monoToggle && (
+            <FormControl>
+              <InputLabel id="monotype-picker">Monotype Type</InputLabel>
+              <Select
+                labelId="monotype-picker"
+                id="monotype-picker"
+                value={teamFormData.monotype}
+                label="Monotype Type"
+                onChange={changeType}
+              >
+                {types.map((type) => (
+                  <MenuItem value={type} key={type}>
+                    {type}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          )} */}
           <br />
           <Button variant="contained" type="submit">
             Create Team
           </Button>
+          {error && (
+            <Alert severity="error">
+              There was an error creating your team.
+            </Alert>
+          )}
         </Stack>
       </Box>
     </>

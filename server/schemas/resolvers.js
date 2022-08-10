@@ -19,8 +19,8 @@ const resolvers = {
     },
   },
   Mutation: {
-    login: async (parent, { email, password }) => {
-      const user = await User.findOne({ email });
+    login: async (parent, { username, password }) => {
+      const user = await User.findOne({ username });
 
       if (!user) {
         throw new AuthenticationError("Incorrect credentials");
@@ -41,14 +41,16 @@ const resolvers = {
 
       return { token, user };
     },
+    
     saveTeam: async (parent, args, context) => {
+      console.log(args);
       if (context.user) {
         const updatedUser = await User.findOneAndUpdate(
           { _id: context.user._id },
           { $addToSet: { savedTeams: args } },
           { new: true, runValidators: true }
         );
-        return updatedUser;
+        return(updatedUser.savedTeams[updatedUser.savedTeams.length - 1]);
       }
 
       throw new AuthenticationError("Not logged in");
